@@ -55,7 +55,8 @@
                     </li>
                     <li class="nav-item">
                         <!-- CHANGE ME TO THE REAL REPO LINK -->
-                        <a class="nav-link" href="https://github.com/rebcop/GreenGroveMortgage" target="_blank">The Repo</a>
+                        <a class="nav-link" href="https://github.com/rebcop/GreenGroveMortgage" target="_blank">The
+                            Repo</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="https://rebcop.dev/" target="_blank">Portfolio</a>
@@ -73,7 +74,64 @@
     <!-- #endregion navbar -->
 
     <main class="container py-3">
-        
+
+        <div class="row g-3">
+            <div class="col-12 col-md-8 order-md-last">
+                <div class="card p-3 h-100 justify-content-around">
+                    <h1 class="text-center display-5"> Your Monthly Payments</h1>
+                    <div id="monthlyPayment" class="text-center m-3 display-6">$471.78</div>
+                    <div class="row row-cols-1 row-cols-sm-2 px-5 gy-2">
+                        <div class="col fw-bold text-center text-md-start">Total Principal</div>
+                        <div id="totPrincipal" class="col text-center text-md-end">$25,000.00</div>
+                        <div class="col fw-bold text-center text-md-start">Total Interest</div>
+                        <div id="totInterest" class="col text-center text-md-end">$3,306.85</div>
+                        <div class="col fw-bold text-center text-md-start">Total Cost</div>
+                        <div id="totCost" class="col text-center text-md-end">$28,306.85</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card p-3 h-100">
+                    <form action="#">
+                        <div class="row row-cols-2 row-cols-md-1 row-cols-lg-2 gy-3">
+                            <div class="col"><label class="form-label" for="loanAmount">Loan Amount</label></div>
+                            <div class="col"><input class="form-control" id="loanAmount" name="loanAmount" type="number"
+                                    placeholder="Loan Amount" value="25000" required /></div>
+                            <div class="col"><label class="form-label" for="term">Term (Months)</label></div>
+                            <div class="col"><input class="form-control" id="term" name="term" type="number"
+                                    placeholder="Term" value="60" required /></div>
+                            <div class="col"><label class="form-label" for="interestRate">Interest Rate</label></div>
+                            <div class="col"><input class="form-control" id="interestRate" name="interestRate"
+                                    placeholder="Interst Rate" value=".05" required /></div>
+                        </div>
+                        <div class="text-end mt-3">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3  p-3">
+            <div class="table-responsive">
+                <table class="table table-striped ">
+                    <thead class="table-success">
+                        <tr>
+                            <th>Month</th>
+                            <th>Payment</th>
+                            <th>Principal</th>
+                            <th>Interest</th>
+                            <th>Total Interest</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="amortizationSchedule">
+                        <!-- Mortgage Amortization Table Rows Go Here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
 
     </main>
@@ -96,6 +154,19 @@
         </div>
 
     </footer>
+
+
+    <!-- Template for Mortgage Amortization Table -->
+    <template>
+        <tr>
+            <td id="month">1</td>
+            <td id="monthlyPayment">$471.78</td>
+            <td id="monthlyPrincipal">$367.61</td>
+            <td id="monthlyInterest">$367.61</td>
+            <td id="totMonthlyInterest">$367.61</td>
+            <td id="monthlyBalance">$367.61</td>
+        </tr>
+    </template>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
