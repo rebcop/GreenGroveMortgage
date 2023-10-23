@@ -102,6 +102,13 @@ footer .bi:hover {
 
 /* #endregion Index */
 
+/* #region App */
+
+.card button .btn-close {
+    top: 0;
+}
+
+/* #endregion App */
 
 /* #region Code */
 

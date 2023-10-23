@@ -28,7 +28,7 @@
 
 <!-- CHANGE THEME ACCORDINGLY TO LOGO -->
 
-<body data-rc-theme="green">
+<body data-rc-theme="green" onload="localStorage.clear()">
 
     <!-- #region navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -76,7 +76,9 @@
     <main class="container py-3">
 
         <div class="row g-3">
-            <div class="col-12 col-md-8 order-md-last">
+
+            <!-- Summary of Latest Calculation -->
+            <div class="col-12 col-md-8 order-md-1">
                 <div class="card p-3 h-100 justify-content-around">
                     <h1 class="text-center display-5"> Your Monthly Payments</h1>
                     <div id="monthlyPayment" class="text-center m-3 display-6">---</div>
@@ -90,6 +92,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Mortgage Calculation Form -->
             <div class="col-12 col-md-4">
                 <div class="card p-3 h-100">
                     <form id="newMortgageCalcForm" action="#">
@@ -107,14 +111,25 @@
                         <div class="text-end mt-3">
                             <button type="submit" class="btn btn-primary">Calculate</button>
                         </div>
-                    
                     </form>
                 </div>
             </div>
+
+            <div class="col-12 order-md-1">
+                <div id="historyCardDiv" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+
+                    <!-- Past Calculation Cards Go Here -->
+
+                </div>
+            </div>
+
         </div>
 
+        </div>
+
+
         <div class="card mt-3  p-3">
-            <div class="table-responsive">
+            <div class="table-responsive text-center">
                 <table class="table table-striped ">
                     <thead class="table-success">
                         <tr>
@@ -155,17 +170,32 @@
 
     </footer>
 
-
     <!-- Template for Mortgage Amortization Table -->
     <template id="amortRowTemplate">
         <tr>
-            <td id="month">1</td>
-            <td id="monthlyPayment">$471.78</td>
-            <td id="monthlyPrincipal">$367.61</td>
-            <td id="monthlyInterest">$367.61</td>
-            <td id="totMonthlyInterest">$367.61</td>
-            <td id="monthlyBalance">$367.61</td>
+            <td class="month">1</td>
+            <td class="monthlyPayment">$471.78</td>
+            <td class="monthlyPrincipal">$367.61</td>
+            <td class="monthlyInterest">$367.61</td>
+            <td class="totMonthlyInterest">$367.61</td>
+            <td class="monthlyBalance">$367.61</td>
         </tr>
+    </template>
+
+    <!-- Template for past calculation cards -->
+    <template id="historyCardTemplate">
+        <div class="col collapse show " id="oldCalculation">
+            <div class="card justify-content-around p-2 text-center ">
+                <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#oldCalculation"
+                    aria-expanded="true" aria-controls="oldCalculation"></button>
+                <div id="monthlyPayment" class="fs-5 ">$471.78</div>
+                <div class="row row-cols-3 bg-success-subtle m-0">
+                    <div id="totPrincipal" class="col small">25K</div>
+                    <div id="totInterest" class="col small">60</div>
+                    <div id="totCost" class="col small">5<span>%</span></div>
+                </div>
+            </div>
+        </div>
     </template>
 
     <!-- Bootstrap JS -->

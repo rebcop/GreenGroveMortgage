@@ -4,11 +4,25 @@ function runMortgageCalculator() {
     let mortgageVariables = getMortgageVariables()
 
     // Calculate the mortagge loan values from Variables
-    let amortizationArray = calculateMortgage(mortgageVariables);
+    let mortgageCalcObject = calculateMortgage(mortgageVariables);
 
-    displayMortgageSummary(amortizationArray, mortgageVariables.term);
+    displayMortgageSummary(mortgageCalcObject);
 
-    displayAmortTable(amortizationArray);
+    displayAmortTable(mortgageCalcObject.amortizationArray);
+
+    // Get calculations from local storage
+    let mortgageCalcsArray = getCalculation();
+    
+    // if (mortgageCalcsArray.length > 0) {
+    //     displayHistory(mortgageCalcsArray);
+    // }
+
+    // Update array with new mortgage calculation
+    mortgageCalcsArray.push(mortgageCalcObject);
+
+    // Save new updated array to local storage
+    saveCalculation(mortgageCalcsArray);
+
 }
 
 // Calculates values to put on amortization table and returns it in array of objects
@@ -22,7 +36,7 @@ function calculateMortgage(mortgageVariables) {
     let monthlyPayment = loan * (rate / 1200) / (1 - Math.pow((1 + rate/1200), -term));
 
     // Array to hold all the objects for each monthly calculation
-    let termMortgageCalculation = [];
+    let amortizationArray = [];
 
     // Initialize object 
     let monthlyMortgageCalculation = {
@@ -36,7 +50,7 @@ function calculateMortgage(mortgageVariables) {
     };
 
     // Calculate values and put them into calculation object for that month and add to array
-    for (let i=0; i <= mortgageVariables.term; i++) {
+    for (let i=0; i <= term; i++) {
 
         if (i > 0 ) {
 
@@ -44,17 +58,17 @@ function calculateMortgage(mortgageVariables) {
             let month = i;
                     
             // Calculate the monthly interest Payment
-            let remaingingBalance = termMortgageCalculation[i-1].monthlyBalance
+            let remaingingBalance = amortizationArray[i-1].monthlyBalance
             let monthlyInterest = remaingingBalance * rate / 1200;
 
             // Calculate the monthly principal payment
             let monthlyPrincipal = monthlyPayment - monthlyInterest;
 
             // Calculate the total monthly principal up to that month
-            let totMonthlyPrincipal = termMortgageCalculation[i-1].totMonthlyPrincipal + monthlyPrincipal ;
+            let totMonthlyPrincipal = amortizationArray[i-1].totMonthlyPrincipal + monthlyPrincipal ;
 
             // Calculate the total monthly interest up to that month
-            let totMonthlyInterest = termMortgageCalculation[i-1].totMonthlyInterest + monthlyInterest;
+            let totMonthlyInterest = amortizationArray[i-1].totMonthlyInterest + monthlyInterest;
 
             // Calculate the remaining balance
             remaingingBalance -= monthlyPrincipal;
@@ -73,9 +87,28 @@ function calculateMortgage(mortgageVariables) {
         }
 
         // Add calculation for month to array
-        termMortgageCalculation.push(monthlyMortgageCalculation);
+        amortizationArray.push(monthlyMortgageCalculation);
     }
-    return termMortgageCalculation;
+
+    // Get the last month in the amortization array
+    let lastMonth = amortizationArray[term];
+
+    // Put summary in object
+    let summary = {
+        monthlyPayment: lastMonth.monthlyPayment,
+        totPrincipal: lastMonth.totMonthlyPrincipal,
+        totInterest: lastMonth.totMonthlyInterest,
+        totCost: lastMonth.totMonthlyPrincipal + lastMonth.totMonthlyInterest
+    }
+
+    // Make one object that holds summary object and amortization array
+    let mortgageCalcObject = {
+        summary: summary,
+        amortizationArray: amortizationArray
+    }
+
+
+    return mortgageCalcObject;
 }
 
 
@@ -98,9 +131,9 @@ function getMortgageVariables() {
 }
 
 // Display value summary
-function displayMortgageSummary(amortizationArray, term) {
+function displayMortgageSummary(mortgageCalcObject) {
 
-    let lastMonth = amortizationArray[term];
+    let summary = mortgageCalcObject.summary;
 
     let dollarUSLocal = Intl.NumberFormat('en-US', {
         style: "currency",
@@ -108,20 +141,20 @@ function displayMortgageSummary(amortizationArray, term) {
     });
 
     let monthlyPayment = document.getElementById('monthlyPayment');
-    monthlyPayment.textContent = dollarUSLocal.format(lastMonth.monthlyPayment);
+    monthlyPayment.textContent = dollarUSLocal.format(summary.monthlyPayment);
 
     let totPrincipal = document.getElementById('totPrincipal');
-    totPrincipal.textContent = dollarUSLocal.format(lastMonth.totMonthlyPrincipal);
+    totPrincipal.textContent = dollarUSLocal.format(summary.totPrincipal);
 
     let totInterest = document.getElementById('totInterest');
-    totInterest.textContent = dollarUSLocal.format(lastMonth.totMonthlyInterest);
+    totInterest.textContent = dollarUSLocal.format(summary.totInterest);
 
     let totCost = document.getElementById('totCost');
-    totCost.textContent = dollarUSLocal.format(lastMonth.totMonthlyPrincipal + lastMonth.totMonthlyInterest);
+    totCost.textContent = dollarUSLocal.format(summary.totCost);
 
 }
 
-// Display values on the amortization table
+// Display values from array on the amortization table
 function displayAmortTable(amortizationArray) {
 
     let dollarUSLocal = Intl.NumberFormat('en-US', {
@@ -129,37 +162,73 @@ function displayAmortTable(amortizationArray) {
         currency: "USD"
     });
 
+    // Get the table body element to put the rows in
     const amortTable = document.getElementById('amortizationSchedule');
 
+    // Rest table
     amortTable.innerHTML = '';
 
+    // Get the amortization table row template
     const amortRowTemplate = document.getElementById('amortRowTemplate');
 
+    // Make each row for the table and put the data in the table
     for(i = 1; i < amortizationArray.length; i++) {
 
         let monthlyMortgage = amortizationArray[i];
 
         let amortRow = amortRowTemplate.content.cloneNode(true);
 
-        let month = amortRow.getElementById('month');
+        let month = amortRow.querySelector('.month');
         month.textContent = monthlyMortgage.month;
 
-        let monthlyPayment = amortRow.getElementById('monthlyPayment');
+        let monthlyPayment = amortRow.querySelector('.monthlyPayment');
         monthlyPayment.textContent = dollarUSLocal.format(monthlyMortgage.monthlyPayment);
 
-        let monthlyPrincipal = amortRow.getElementById('monthlyPrincipal');
+        let monthlyPrincipal = amortRow.querySelector('.monthlyPrincipal');
         monthlyPrincipal.textContent = dollarUSLocal.format(monthlyMortgage.monthlyPrincipal);
 
-        let monthlyInterest = amortRow.getElementById('monthlyInterest');
+        let monthlyInterest = amortRow.querySelector('.monthlyInterest');
         monthlyInterest.textContent = dollarUSLocal.format(monthlyMortgage.monthlyInterest);
 
-        let totMonthlyInterest = amortRow.getElementById('totMonthlyInterest');
+        let totMonthlyInterest = amortRow.querySelector('.totMonthlyInterest');
         totMonthlyInterest.textContent = dollarUSLocal.format(monthlyMortgage.totMonthlyInterest);
 
-        let monthlyBalance = amortRow.getElementById('monthlyBalance');
-        monthlyBalance.textContent = dollarUSLocal.format(monthlyMortgage.monthlyBalance);
+        let monthlyBalance = amortRow.querySelector('.monthlyBalance');
+        if (monthlyMortgage.monthlyBalance < 0 ) {
+
+            monthlyBalance.textContent = dollarUSLocal.format(0);
+        } else {
+
+            monthlyBalance.textContent = dollarUSLocal.format(monthlyMortgage.monthlyBalance);
+        }
 
         amortTable.appendChild(amortRow);
     }
+}
+
+// Get calculations that are stored in local storage
+function getCalculation() {
+    // Get calculations from local storage
+    let mortgageCalcsJson = localStorage.getItem('rpc-mortgageCalcs');
+
+    // Initialize calcs if it hasn't been created before
+    let storedMortgageCalcs = [];
+
+    if (mortgageCalcsJson != null) {
+        storedMortgageCalcs = JSON.parse(mortgageCalcsJson);
+    }
+
+    return storedMortgageCalcs;
 
 }
+
+// Save calculation in local storage
+function saveCalculation(mortgageCalcsArray) {
+
+    // Turn mortgage object into string
+    let mortgageCalcsJson = JSON.stringify(mortgageCalcsArray);
+
+    localStorage.setItem('rpc-mortgageCalcs', mortgageCalcsJson);
+
+}
+
