@@ -5,7 +5,7 @@ function displayMessage() {
     Swal.fire(
         {
             backdrop: false,
-            title: 'APP NAME',
+            title: 'Green Grove Mortgage',
             text: msg, // <-- replace this text with that variable
         }
     );

@@ -95,11 +95,6 @@ footer .bi:hover {
     color: var(--rc-theme-400);
 }
 
-.app-logo {
-    width: 100%;
-    max-width: 400px;
-}
-
 .custom-tooltip {
     --bs-tooltip-bg: var(--rc-theme-400);
     --bs-tooltip-color: var(--bs-white);
@@ -110,7 +105,8 @@ footer .bi:hover {
 
 /* #region Code */
 
-p span {
+p span,
+ul span {
     background-color: #e2e3e5;
     padding: 0 .5rem;
 }
