@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APP NAME: By Rebecca Copeland</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Devicons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
+
+    <!-- Prism CSS -->
+    <link rel="stylesheet" href="/css/prism.css" />
+
+    <!-- Custom CSS -->
+    <link href="/css/site.css" rel="stylesheet" />
+    <link href="/css/themes.css" rel=stylesheet />
+
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/rebeccacopeland-favicon.png" type="image/x-icon" />
+
+</head>
+
+<!-- CHANGE THEME ACCORDINGLY TO LOGO -->
+
+<body data-rc-theme="sunset">
+
+    <!-- #region navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/index.html">
+                <img src="/img/Rebecca-Copeland-logo-white.svg" height="30" />
+                APP NAME
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app.html">The App</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/code.html">The Code</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- CHANGE ME TO THE REAL REPO LINK -->
+                        <a class="nav-link" href="https://github.com/rebcop" target="_blank">The Repo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://rebcop.dev/" target="_blank">Portfolio</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- CHANGE ME TO THE DEPLOYED BLOG PROJECT -->
+                        <!-- NOTE: it would be a great idea to write a blog and
+                        link here -->
+                        <a class="nav-link" href="" target="_blank">Blog</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- #endregion navbar -->
+
+    <main class="container py-3">
+        <h2 class="border-bottom border-2 border-secondary-subtle">The Code</h2>
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <pre class="line-numbers">
+                    <code class="language-js">
+function displayMessage() {
+    // get the text out of our input and assign it to a variable
+    let msg = document.getElementById('message').value;
+
+    Swal.fire(
+        {
+            backdrop: false,
+            title: 'APP NAME',
+            text: msg, // <-- replace this text with that variable
+        }
+    );
+}
+                    </code>
+                </pre>
+            </div>
+            <div class="col-12 col-lg-4">
+                <!-- Explain your code here! This is the trick, this is what I learned,
+                this is how it functions -->
+                <p>The code is structured in one function</p>
+                <p>
+                    <code>displayMessage</code> displays a sweetalert
+                    when the button is pressed.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-3">
+
+        <div class="container">
+            <div class="row align-items-center row-cols-1 row-cols-lg-3 gy-2">
+                <div class="col text-center text-lg-start">
+                    &copy; 2023 Rebecca Copeland
+                </div>
+                <div class="col text-center">
+                    <img src="/img/Rebecca-Copeland-full-logo-white.svg" height="40" />
+                </div>
+                <div class="col text-center text-lg-end">
+                    <a href="https://www.linkedin.com/in/rebcop/" target="_blank"><i class="bi bi-linkedin"></i></a>
+                    <a href="https://github.com/rebcop" target="_blank"><i class="bi bi-github"></i></a>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <!-- Prism JS -->
+    <script src="/js/prism.js"></script>
+    <script>
+        Prism.plugins.NormalizeWhitespace.setDefaults({
+            'remove-trailing': true,
+            'remove-indent': true,
+            'left-trim': true,
+            'right-trim': true
+        })
+    </script>
+
+</body>
+
+</html>

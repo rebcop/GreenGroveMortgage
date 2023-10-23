@@ -1,0 +1,139 @@
+:root {
+
+    /* colors */
+    --rc-light-color: #dfe3e4;
+    --rc-dark-color: #1b1b1b;
+    --rc-primary-color: hsl(0, 50%, 11%); /* RC Sunset Theme 900 */
+    --rc-secondary-color: hsl(0, 50%, 61%); /* RC Sunset Theme 400 */
+    --rc-heading-bg-color: #e2e3e5; /* Bootstrap Secondary Sub Color */
+    --rc-heading-color: #6c757d; /* Bootstrap Secondary Color */
+}
+
+
+/* #region sticky footer */
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex-grow: 1;
+}
+
+footer {
+    flex-shrink: 1;
+}
+
+/* #endregion sticky footer */
+
+/* #region All Pages */
+h2 {
+    color: var(--rc-theme-400);
+    text-transform: uppercase;
+    font-size: 2.75rem;
+    font-weight: bolder;
+}
+
+h4 {
+    background-color: var(--rc-heading-bg-color);
+    color: var(--rc-heading-color);
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    letter-spacing: .1rem;
+    padding: 0rem 1rem;
+}
+
+p {
+    padding: 0rem 1rem;
+}
+
+.navbar-nav .nav-link {
+    transition: color 0.2s ease-in;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link:hover {
+    color: var(--rc-secondary-color);
+}
+
+.navbar .navbar-brand {
+    color: var(--rc-light-color);
+}
+
+footer, nav.navbar {
+    background-color: var(--rc-primary-color);
+    color: var(--rc-light-color);
+}
+
+footer .bi {
+    font-size: 2rem;
+    padding-left: .5rem;
+    color: var(--rc-light-color);
+    transition: color 0.25s ease-in;
+}
+
+footer .bi:hover {
+    color: var(--rc-secondary-color);
+}
+/* #endregion All Pages */
+
+
+/* #region Index */
+.devicons {
+    font-size: 3rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.bi-check-square-fill {
+    color: var(--rc-theme-400);
+}
+
+.app-logo {
+    width: 100%;
+    max-width: 400px;
+}
+
+.custom-tooltip {
+    --bs-tooltip-bg: var(--rc-theme-400);
+    --bs-tooltip-color: var(--bs-white);
+}
+
+/* #endregion Index */
+
+
+/* #region Code */
+
+p span {
+    background-color: #e2e3e5;
+    padding: 0 .5rem;
+}
+
+/* #endregion Code */
+
+/* #region Modify Bootstrap Components */
+.btn-outline-primary {
+    --bs-btn-color: var(--rc-theme-900);
+    --bs-btn-border-color: var(--rc-theme-900);
+    --bs-btn-hover-bg: var(--rc-theme-900);
+    --bs-btn-hover-border-color: var(--rc-theme-900);
+    --bs-btn-active-bg: var(--rc-theme-900);
+    --bs-btn-active-border-color: var(--rc-theme-900);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--rc-theme-400);
+    --bs-btn-border-color: var(--rc-theme-400);
+    --bs-btn-hover-bg: var(--rc-theme-500);
+    --bs-btn-hover-border-color: var(--rc-theme-500);
+    --bs-btn-active-bg: var(--rc-theme-600);
+    --bs-btn-active-border-color: var(--rc-theme-600);
+}
+
+/* #endregion Modify Bootstrap Components */
