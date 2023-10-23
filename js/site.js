@@ -247,7 +247,7 @@ function displayHistory(mortgageCalcsArray) {
         currency: "USD"
     });
 
-    for (let i = 0; mortgageCalcsArray.length; i++) {
+    for (let i = 0; i < mortgageCalcsArray.length; i++) {
 
         let mortgageCalc = mortgageCalcsArray[i];
 
