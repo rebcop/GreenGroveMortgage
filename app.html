@@ -79,33 +79,33 @@
             <div class="col-12 col-md-8 order-md-last">
                 <div class="card p-3 h-100 justify-content-around">
                     <h1 class="text-center display-5"> Your Monthly Payments</h1>
-                    <div id="monthlyPayment" class="text-center m-3 display-6">$471.78</div>
+                    <div id="monthlyPayment" class="text-center m-3 display-6">---</div>
                     <div class="row row-cols-1 row-cols-sm-2 px-5 gy-2">
                         <div class="col fw-bold text-center text-md-start">Total Principal</div>
-                        <div id="totPrincipal" class="col text-center text-md-end">$25,000.00</div>
+                        <div id="totPrincipal" class="col text-center text-md-end">---</div>
                         <div class="col fw-bold text-center text-md-start">Total Interest</div>
-                        <div id="totInterest" class="col text-center text-md-end">$3,306.85</div>
+                        <div id="totInterest" class="col text-center text-md-end">---</div>
                         <div class="col fw-bold text-center text-md-start">Total Cost</div>
-                        <div id="totCost" class="col text-center text-md-end">$28,306.85</div>
+                        <div id="totCost" class="col text-center text-md-end">---</div>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-md-4">
                 <div class="card p-3 h-100">
-                    <form action="#">
+                    <form id="newMortgageCalcForm" action="#">
                         <div class="row row-cols-2 row-cols-md-1 row-cols-lg-2 gy-3">
-                            <div class="col"><label class="form-label" for="loanAmount">Loan Amount</label></div>
-                            <div class="col"><input class="form-control" id="loanAmount" name="loanAmount" type="number"
+                            <div class="col"><label class="form-label" for="loan">Loan Amount</label></div>
+                            <div class="col"><input class="form-control" id="loan" name="loan" type="number"
                                     placeholder="Loan Amount" value="25000" required /></div>
                             <div class="col"><label class="form-label" for="term">Term (Months)</label></div>
                             <div class="col"><input class="form-control" id="term" name="term" type="number"
                                     placeholder="Term" value="60" required /></div>
-                            <div class="col"><label class="form-label" for="interestRate">Interest Rate</label></div>
-                            <div class="col"><input class="form-control" id="interestRate" name="interestRate"
-                                    placeholder="Interst Rate" value=".05" required /></div>
+                            <div class="col"><label class="form-label" for="rate">Interest Rate</label></div>
+                            <div class="col"><input class="form-control" id="rate" name="rate"
+                                    placeholder="Interst Rate" value="5" required /></div>
                         </div>
                         <div class="text-end mt-3">
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary">Calculate</button>
                         </div>
                     
                     </form>
@@ -157,7 +157,7 @@
 
 
     <!-- Template for Mortgage Amortization Table -->
-    <template>
+    <template id="amortRowTemplate">
         <tr>
             <td id="month">1</td>
             <td id="monthlyPayment">$471.78</td>
@@ -179,14 +179,19 @@
     <!-- Custom JS -->
     <script src="/js/site.js"></script>
 
+    <!-- Submit Form -->
     <script>
-        // get the button on the page and assign it to a variable
-        let button = document.getElementById('btnSubmit');
+        // Ge the form element which has the button to listen for
+        let newMortgageCalcForm = document.getElementById('newMortgageCalcForm');
 
-        // tell the button to run our displayMessage function when clicked
-        button.addEventListener('click', displayMessage);
+        // When the button has been clicked, don't reload the page then calculate
+        newMortgageCalcForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            runMortgageCalculator();
+        })
 
     </script>
+
 </body>
 
 </html>
