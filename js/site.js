@@ -13,9 +13,9 @@ function runMortgageCalculator() {
     // Get calculations from local storage
     let mortgageCalcsArray = getCalculation();
     
-    // if (mortgageCalcsArray.length > 0) {
-    //     displayHistory(mortgageCalcsArray);
-    // }
+    if (mortgageCalcsArray.length > 0) {
+        displayHistory(mortgageCalcsArray);
+    }
 
     // Update array with new mortgage calculation
     mortgageCalcsArray.push(mortgageCalcObject);
@@ -103,6 +103,7 @@ function calculateMortgage(mortgageVariables) {
 
     // Make one object that holds summary object and amortization array
     let mortgageCalcObject = {
+        mortgageVariables: mortgageVariables,
         summary: summary,
         amortizationArray: amortizationArray
     }
@@ -232,3 +233,49 @@ function saveCalculation(mortgageCalcsArray) {
 
 }
 
+// Display past calculations
+function displayHistory(mortgageCalcsArray) {
+
+    const historyCardTemplate = document.getElementById('historyCardTemplate');
+
+    const historyCardDiv = document.getElementById('historyCardDiv');
+
+    historyCardDiv.textContent = '';
+
+    let dollarUSLocal = Intl.NumberFormat('en-US', {
+        style: "currency",
+        currency: "USD"
+    });
+
+    for (let i = 0; mortgageCalcsArray.length; i++) {
+
+        let mortgageCalc = mortgageCalcsArray[i];
+
+        // Grab values to add to card
+        let monthlyPaymentHistValue = mortgageCalc.summary.monthlyPayment;
+        monthlyPaymentHistValue = dollarUSLocal.format(monthlyPaymentHistValue);
+        let loanHistValue = mortgageCalc.mortgageVariables.loan;
+        loanHistValue = dollarUSLocal.format(loanHistValue);
+        let termHistValue = mortgageCalc.mortgageVariables.term;
+        termHistValue = termHistValue;
+        let rateHistValue = mortgageCalc.mortgageVariables.rate;
+        rateHistValue = rateHistValue;
+
+        let historyCard = historyCardTemplate.content.cloneNode(true);
+
+        let monthlyPaymentHist = historyCard.querySelector('.monthlyPaymentHist');
+        monthlyPaymentHist.textContent = monthlyPaymentHistValue;
+
+        let loanHist = historyCard.querySelector('.loanHist');
+        loanHist.textContent = loanHistValue;
+        
+        let termHist = historyCard.querySelector('.termHist');
+        termHist.textContent = termHistValue; 
+
+        let rateHist = historyCard.querySelector('.rateHist');
+        rateHist.textContent = rateHistValue; 
+
+        historyCardDiv.appendChild(historyCard);
+    }
+
+}
