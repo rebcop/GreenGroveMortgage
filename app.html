@@ -116,7 +116,7 @@
             </div>
 
             <div class="col-12 order-md-1">
-                <div id="historyCardDiv" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                <div id="historyCardDiv" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 flex-nowrap overflow-hidden">
 
                     <!-- Past Calculation Cards Go Here -->
 
@@ -184,15 +184,15 @@
 
     <!-- Template for past calculation cards -->
     <template id="historyCardTemplate">
-        <div class="col collapse show " id="oldCalculation">
+        <div class="col collapse show " >
             <div class="card justify-content-around p-2 text-center ">
-                <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#oldCalculation"
-                    aria-expanded="true" aria-controls="oldCalculation"></button>
+                <button type="button" class="btn-close text-end" data-bs-toggle="collapse" data-bs-target="#oldCalculation"
+                    aria-expanded="true" aria-controls="oldCalculation" onclick="deleteCalculation(this)"></button>
                 <div class="monthlyPaymentHist fs-5 ">$471.78</div>
                 <div class="row row-cols-3 bg-success-subtle m-0">
-                    <div class="loanHist col small">25K</div>
-                    <div class="termHist col small">60</div>
-                    <div class="rateHist col small">5<span>%</span></div>
+                    <div class="col small"><i class="bi bi-cash-stack"></i> <span class="loanHist"></span>K</div>
+                    <div class="col small"><i class="bi bi-calendar-month-fill"></i> <span class="termHist"></span></div>
+                    <div class="col small"><i class="bi bi-percent"></i> <span class="rateHist"></span></div>
                 </div>
             </div>
         </div>

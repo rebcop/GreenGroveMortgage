@@ -247,7 +247,7 @@ function displayHistory(mortgageCalcsArray) {
         currency: "USD"
     });
 
-    for (let i = 0; i < mortgageCalcsArray.length; i++) {
+    for (let i = mortgageCalcsArray.length - 1; i >= 0 ; i--) {
 
         let mortgageCalc = mortgageCalcsArray[i];
 
@@ -255,13 +255,21 @@ function displayHistory(mortgageCalcsArray) {
         let monthlyPaymentHistValue = mortgageCalc.summary.monthlyPayment;
         monthlyPaymentHistValue = dollarUSLocal.format(monthlyPaymentHistValue);
         let loanHistValue = mortgageCalc.mortgageVariables.loan;
-        loanHistValue = dollarUSLocal.format(loanHistValue);
+        loanHistValue = loanHistValue/1000;
         let termHistValue = mortgageCalc.mortgageVariables.term;
         termHistValue = termHistValue;
         let rateHistValue = mortgageCalc.mortgageVariables.rate;
         rateHistValue = rateHistValue;
 
         let historyCard = historyCardTemplate.content.cloneNode(true);
+
+        let collapseCard = historyCard.querySelector('.collapse');
+        collapseCard.setAttribute('id', `collapse-${i}`);
+        
+        let collapseBtn = historyCard.querySelector('.collapse .btn-close');
+        collapseBtn.setAttribute('data-bs-target', `#collapse-${i}`);
+        collapseBtn.setAttribute('aria-controls',`collapse-${i}`);
+        collapseBtn.setAttribute('data-mortgageCalcsArray-id',`${i}`);
 
         let monthlyPaymentHist = historyCard.querySelector('.monthlyPaymentHist');
         monthlyPaymentHist.textContent = monthlyPaymentHistValue;
@@ -277,5 +285,30 @@ function displayHistory(mortgageCalcsArray) {
 
         historyCardDiv.appendChild(historyCard);
     }
+
+}
+
+// Delete the saved calculation if the close button is pressed on the history cards
+function deleteCalculation(closeBtn) {
+
+    // Get number that identifies history card
+    let arrayNum = parseInt(closeBtn.getAttribute('data-mortgageCalcsArray-id'));
+
+    // Get calculations from local storage
+    let mortgageCalcsArray = getCalculation();
+    
+    // Decalare new array variable to move over the objects that are not deleted
+    let newMortgageCalcsArray = [];
+
+    for (let i = 0; i < mortgageCalcsArray.length; i++) {
+
+        if (i != arrayNum) {
+        // Move over saved calculation
+        newMortgageCalcsArray.push(mortgageCalcsArray[i]);
+        }
+    }
+
+    // Save new updated array to local storage
+    saveCalculation(newMortgageCalcsArray);
 
 }
