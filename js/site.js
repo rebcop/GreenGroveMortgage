@@ -108,7 +108,6 @@ function calculateMortgage(mortgageVariables) {
         amortizationArray: amortizationArray
     }
 
-
     return mortgageCalcObject;
 }
 
@@ -128,7 +127,29 @@ function getMortgageVariables() {
     newMortgageVariables.term = parseInt(newMortgageVariables.term);
     newMortgageVariables.rate = parseInt(newMortgageVariables.rate);
 
-    return newMortgageVariables;
+    let loan = newMortgageVariables.loan;
+    let term = newMortgageVariables.term;
+    let rate = newMortgageVariables.rate;
+
+    if (Number.isInteger(loan) 
+        && Number.isInteger(term) 
+        && Number.isInteger(rate)
+        && loan > 0
+        && term > 0
+        && rate >= 0 ) {
+            return newMortgageVariables;
+    } else {
+
+        // Uh oh!
+        Swal.fire ({
+            icon: 'error',
+            backdrop: false,
+            title: 'Oops!',
+            text: 'Please enter valid integers. Check term and loan are greater than zero and rate is equal to or greater than zero.'
+        });
+    }
+    
+    
 }
 
 // Display value summary
