@@ -26,8 +26,7 @@
 
 </head>
 
-<!-- CHANGE THEME ACCORDINGLY TO LOGO -->
-
+<!-- Green Theme for page and clear the storage in the browser when page loads -->
 <body data-rc-theme="green" onload="localStorage.clear()">
 
     <!-- #region navbar -->
@@ -98,15 +97,15 @@
                 <div class="card p-3 h-100">
                     <form id="newMortgageCalcForm" action="#">
                         <div class="row row-cols-2 row-cols-md-1 row-cols-lg-2 gy-3">
-                            <div class="col"><label class="form-label" for="loan">Loan Amount</label></div>
+                            <div class="col"><label class="form-label" for="loan">Loan Amount ($)</label></div>
                             <div class="col"><input class="form-control" id="loan" name="loan" type="number"
-                                    placeholder="Loan Amount" value="25000" required /></div>
+                                    placeholder="Loan Amount" value="25000" min="0" required /></div>
                             <div class="col"><label class="form-label" for="term">Term (Months)</label></div>
                             <div class="col"><input class="form-control" id="term" name="term" type="number"
-                                    placeholder="Term" value="60" required /></div>
-                            <div class="col"><label class="form-label" for="rate">Interest Rate</label></div>
+                                    placeholder="Term" value="60" min="1" required /></div>
+                            <div class="col"><label class="form-label" for="rate">Interest Rate (%)</label></div>
                             <div class="col"><input class="form-control" id="rate" name="rate"
-                                    placeholder="Interst Rate" value="5" required /></div>
+                                    placeholder="Interst Rate" value="5" min="0" required /></div>
                         </div>
                         <div class="text-end mt-3">
                             <button type="submit" class="btn btn-primary">Calculate</button>
@@ -122,11 +121,9 @@
 
                 </div>
             </div>
-
         </div>
 
         </div>
-
 
         <div class="card mt-3  p-3">
             <div class="table-responsive text-center">

@@ -6,7 +6,7 @@ function runMortgageCalculator() {
     // Calculate the mortagge loan values from Variables
     let mortgageCalcObject = calculateMortgage(mortgageVariables);
 
-    displayMortgageSummary(mortgageCalcObject);
+    displayMortgageSummary(mortgageCalcObject.summary);
 
     displayAmortTable(mortgageCalcObject.amortizationArray);
 
@@ -38,7 +38,7 @@ function calculateMortgage(mortgageVariables) {
     // Array to hold all the objects for each monthly calculation
     let amortizationArray = [];
 
-    // Initialize object 
+    // Initialize monthly object 
     let monthlyMortgageCalculation = {
         month: 0,
         monthlyPayment: 0,
@@ -73,7 +73,7 @@ function calculateMortgage(mortgageVariables) {
             // Calculate the remaining balance
             remaingingBalance -= monthlyPrincipal;
 
-            // Put all calculations for month into array
+            // Put all calculations for month into object
             monthlyMortgageCalculation = {
                 month: month,
                 monthlyPayment: monthlyPayment,
@@ -125,15 +125,15 @@ function getMortgageVariables() {
     // Change values in object from string to numbers
     newMortgageVariables.loan = parseInt(newMortgageVariables.loan);
     newMortgageVariables.term = parseInt(newMortgageVariables.term);
-    newMortgageVariables.rate = parseInt(newMortgageVariables.rate);
+    newMortgageVariables.rate = parseFloat(newMortgageVariables.rate);
 
     let loan = newMortgageVariables.loan;
     let term = newMortgageVariables.term;
     let rate = newMortgageVariables.rate;
 
-    if (Number.isInteger(loan) 
-        && Number.isInteger(term) 
-        && Number.isInteger(rate)
+    if (!isNaN(loan) 
+        && !isNaN(term) 
+        && !isNaN(rate)
         && loan > 0
         && term > 0
         && rate >= 0 ) {
@@ -148,15 +148,14 @@ function getMortgageVariables() {
             text: 'Please enter valid integers. Check term and loan are greater than zero and rate is equal to or greater than zero.'
         });
     }
-    
-    
 }
 
 // Display value summary
-function displayMortgageSummary(mortgageCalcObject) {
+function displayMortgageSummary(mortgageCalcSummary) {
 
-    let summary = mortgageCalcObject.summary;
-
+    let summary = mortgageCalcSummary;
+    
+    // Could use toLocaleString instead
     let dollarUSLocal = Intl.NumberFormat('en-US', {
         style: "currency",
         currency: "USD"
@@ -194,12 +193,15 @@ function displayAmortTable(amortizationArray) {
     const amortRowTemplate = document.getElementById('amortRowTemplate');
 
     // Make each row for the table and put the data in the table
+    // can use forEach 
+    // amortizationArray.forEach(payment => {})
     for(i = 1; i < amortizationArray.length; i++) {
 
         let monthlyMortgage = amortizationArray[i];
 
         let amortRow = amortRowTemplate.content.cloneNode(true);
 
+        // Could use 'querySelectorAll' to get all the 'td' as an array and index them accordingly put content in
         let month = amortRow.querySelector('.month');
         month.textContent = monthlyMortgage.month;
 
@@ -216,12 +218,10 @@ function displayAmortTable(amortizationArray) {
         totMonthlyInterest.textContent = dollarUSLocal.format(monthlyMortgage.totMonthlyInterest);
 
         let monthlyBalance = amortRow.querySelector('.monthlyBalance');
+        // Can use Math.abs in above monthlyBalance instead of if statement to make sure it only returns positive values
         if (monthlyMortgage.monthlyBalance < 0 ) {
 
             monthlyBalance.textContent = dollarUSLocal.format(0);
-        } else {
-
-            monthlyBalance.textContent = dollarUSLocal.format(monthlyMortgage.monthlyBalance);
         }
 
         amortTable.appendChild(amortRow);
@@ -241,7 +241,6 @@ function getCalculation() {
     }
 
     return storedMortgageCalcs;
-
 }
 
 // Save calculation in local storage
@@ -251,7 +250,6 @@ function saveCalculation(mortgageCalcsArray) {
     let mortgageCalcsJson = JSON.stringify(mortgageCalcsArray);
 
     localStorage.setItem('rpc-mortgageCalcs', mortgageCalcsJson);
-
 }
 
 // Display past calculations
