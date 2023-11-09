@@ -28,8 +28,8 @@ Mobile Web App Screenshot:
 
 ### Links
 
-- Live Site URL: [Netlify](...)
-- Repo URL: [Github Repo]([https://github.com/rebcop/MovieGarden])
+- Live Site URL: [Netlify](https://glittering-queijadas-fe3bfc.netlify.app/)
+- Repo URL: [Github Repo](https://github.com/rebcop/GreenGroveMortgage)
 
 ## My process
 
