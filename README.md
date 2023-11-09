@@ -1,3 +1,4 @@
+![Bash Buddy Logo](./img/GreenGroveMortgage.svg)
 # Green Grove Mortgage - A Coding Challenge
 
 A mortgage calculator
