@@ -1,7 +1,7 @@
 ![Bash Buddy Logo](./img/GreenGroveMortgage.svg)
 # Green Grove Mortgage - A Coding Challenge
 
-A mortgage calculator
+Can you afford a home? Check out what your monthly payments would be for the loan amount you require. Here at Green Grove Mortgage, it's always greener when you have a home!
 
 ## Table of contents
 
