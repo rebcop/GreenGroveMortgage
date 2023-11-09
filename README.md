@@ -10,6 +10,7 @@ A mortgage calculator
 - [My process](#my-process)
   - [Built with](#built-with)
   - [What I learned](#what-i-learned)
+  - [Possible Improvements](#possible-improvements)
   - [Useful resources](#useful-resources)
 - [Author](#author)
 
@@ -18,11 +19,11 @@ A mortgage calculator
 ### Screenshot
 
 Desktop Web App Screenshot:
-![Desktop Screenshot](./img/...t.png)
+![Desktop Screenshot](./img/desktop-screenshot.png)
 
 Mobile Web App Screenshot:
 <br/>
-<img src="./img/....JPG" alt="Mobile Screenshot" width="25%" height="auto">
+<img src="./img/iphone-screenshot.JPG" alt="Mobile Screenshot" width="25%" height="auto">
 
 ### Links
 
@@ -43,16 +44,14 @@ Mobile Web App Screenshot:
 
 ### What I learned
 
-1. 
+1. Use Object.fromEntries to easily grab values from a form as an object
+2. Use localStorage.clear to clear the local storage or just assign the variables saved to empty values
 
-
-    ```js
-
-    ```
-
-
-
-
+### Possible Improvements
+1. When user clicks on history card, it populates the page fields based on the values from that card
+2. Button to see all past history cards
+3. Labeling so user knows what the icons are
+   
 ### Useful resources
 
 - [Bootstrap Docs](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
