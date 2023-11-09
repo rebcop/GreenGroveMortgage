@@ -58,7 +58,8 @@
                     </li>
                     <li class="nav-item">
                         <!-- CHANGE ME TO THE REAL REPO LINK -->
-                        <a class="nav-link" href="https://github.com/rebcop/GreenGroveMortgage" target="_blank">The Repo</a>
+                        <a class="nav-link" href="https://github.com/rebcop/GreenGroveMortgage" target="_blank">The
+                            Repo</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="https://rebcop.dev/" target="_blank">Portfolio</a>
@@ -81,29 +82,441 @@
             <div class="col-12 col-lg-8">
                 <pre class="line-numbers">
                     <code class="language-js">
-function displayMessage() {
-    // get the text out of our input and assign it to a variable
-    let msg = document.getElementById('message').value;
+function runMortgageCalculator() {
 
-    Swal.fire(
-        {
+    // Get Variables
+    let mortgageVariables = getMortgageVariables()
+
+    // Calculate the mortagge loan values from Variables
+    let mortgageCalcObject = calculateMortgage(mortgageVariables);
+
+    displayMortgageSummary(mortgageCalcObject.summary);
+
+    displayAmortTable(mortgageCalcObject.amortizationArray);
+
+    // Get calculations from local storage
+    let mortgageCalcsArray = getCalculation();
+    
+    if (mortgageCalcsArray.length > 0) {
+        displayHistory(mortgageCalcsArray);
+    }
+
+    // Update array with new mortgage calculation
+    mortgageCalcsArray.push(mortgageCalcObject);
+
+    // Save new updated array to local storage
+    saveCalculation(mortgageCalcsArray);
+
+}
+
+// Grab the variables from the form and change to numbers to calculate the mortgage
+function getMortgageVariables() {
+
+    // Get HTML Mortgage Calculator Form Element
+    let newMortgageCalcForm = document.getElementById('newMortgageCalcForm');
+    let mortgageFormVariables = new FormData(newMortgageCalcForm);
+
+    // Create a mortgage variable object from the Mortgage Calculator Form
+    let newMortgageVariables = Object.fromEntries(mortgageFormVariables.entries());
+
+    // Change values in object from string to numbers
+    newMortgageVariables.loan = parseInt(newMortgageVariables.loan);
+    newMortgageVariables.term = parseInt(newMortgageVariables.term);
+    newMortgageVariables.rate = parseFloat(newMortgageVariables.rate);
+
+    let loan = newMortgageVariables.loan;
+    let term = newMortgageVariables.term;
+    let rate = newMortgageVariables.rate;
+
+    if (!isNaN(loan) 
+        && !isNaN(term) 
+        && !isNaN(rate)
+        && loan > 0
+        && term > 0
+        && rate >= 0 ) {
+            return newMortgageVariables;
+    } else {
+
+        // Uh oh!
+        Swal.fire ({
+            icon: 'error',
             backdrop: false,
-            title: 'Green Grove Mortgage',
-            text: msg, // <-- replace this text with that variable
+            title: 'Oops!',
+            text: 'Please enter valid integers. Check term and loan are greater than zero and rate is equal to or greater than zero.'
+        });
+    }
+}
+
+// Calculates values to put on amortization table and returns it in array of objects
+function calculateMortgage(mortgageVariables) {
+
+    let loan = mortgageVariables.loan;
+    let term = mortgageVariables.term;
+    let rate = mortgageVariables.rate;
+
+    // Calculate Monthly Payment
+    let monthlyPayment = loan * (rate / 1200) / (1 - Math.pow((1 + rate/1200), -term));
+
+    // Array to hold all the objects for each monthly calculation
+    let amortizationArray = [];
+
+    // Initialize monthly object 
+    let monthlyMortgageCalculation = {
+        month: 0,
+        monthlyPayment: 0,
+        monthlyPrincipal: 0,
+        monthlyInterest: 0,
+        totMonthlyPrincipal: 0,
+        totMonthlyInterest: 0,
+        monthlyBalance: loan
+    };
+
+    // Calculate values and put them into calculation object for that month and add to array
+    for (let i=0; i &lt;= term; i++) {
+
+        if (i > 0 ) {
+
+            // Set the month
+            let month = i;
+                    
+            // Calculate the monthly interest Payment
+            let remaingingBalance = amortizationArray[i-1].monthlyBalance
+            let monthlyInterest = remaingingBalance * rate / 1200;
+
+            // Calculate the monthly principal payment
+            let monthlyPrincipal = monthlyPayment - monthlyInterest;
+
+            // Calculate the total monthly principal up to that month
+            let totMonthlyPrincipal = amortizationArray[i-1].totMonthlyPrincipal + monthlyPrincipal ;
+
+            // Calculate the total monthly interest up to that month
+            let totMonthlyInterest = amortizationArray[i-1].totMonthlyInterest + monthlyInterest;
+
+            // Calculate the remaining balance
+            remaingingBalance -= monthlyPrincipal;
+
+            // Put all calculations for month into object
+            monthlyMortgageCalculation = {
+                month: month,
+                monthlyPayment: monthlyPayment,
+                monthlyPrincipal: monthlyPrincipal,
+                monthlyInterest: monthlyInterest,
+                totMonthlyPrincipal: totMonthlyPrincipal,
+                totMonthlyInterest: totMonthlyInterest,
+                monthlyBalance: remaingingBalance
+            };
+
         }
-    );
+
+        // Add calculation for month to array
+        amortizationArray.push(monthlyMortgageCalculation);
+    }
+
+    // Get the last month in the amortization array
+    let lastMonth = amortizationArray[term];
+
+    // Put summary in object
+    let summary = {
+        monthlyPayment: lastMonth.monthlyPayment,
+        totPrincipal: lastMonth.totMonthlyPrincipal,
+        totInterest: lastMonth.totMonthlyInterest,
+        totCost: lastMonth.totMonthlyPrincipal + lastMonth.totMonthlyInterest
+    }
+
+    // Make one object that holds summary object and amortization array
+    let mortgageCalcObject = {
+        mortgageVariables: mortgageVariables,
+        summary: summary,
+        amortizationArray: amortizationArray
+    }
+
+    return mortgageCalcObject;
+}
+
+// Display value summary
+function displayMortgageSummary(mortgageCalcSummary) {
+
+    let summary = mortgageCalcSummary;
+    
+    // Could use toLocaleString instead
+    let dollarUSLocal = Intl.NumberFormat('en-US', {
+        style: "currency",
+        currency: "USD"
+    });
+
+    let monthlyPayment = document.getElementById('monthlyPayment');
+    monthlyPayment.textContent = dollarUSLocal.format(summary.monthlyPayment);
+
+    let totPrincipal = document.getElementById('totPrincipal');
+    totPrincipal.textContent = dollarUSLocal.format(summary.totPrincipal);
+
+    let totInterest = document.getElementById('totInterest');
+    totInterest.textContent = dollarUSLocal.format(summary.totInterest);
+
+    let totCost = document.getElementById('totCost');
+    totCost.textContent = dollarUSLocal.format(summary.totCost);
+
+}
+
+// Display values from array on the amortization table
+function displayAmortTable(amortizationArray) {
+
+    let dollarUSLocal = Intl.NumberFormat('en-US', {
+        style: "currency",
+        currency: "USD"
+    });
+
+    // Get the table body element to put the rows in
+    const amortTable = document.getElementById('amortizationSchedule');
+
+    // Rest table
+    amortTable.innerHTML = '';
+
+    // Get the amortization table row template
+    const amortRowTemplate = document.getElementById('amortRowTemplate');
+
+    // Make each row for the table and put the data in the table
+    for(i = 1; i &lt; amortizationArray.length; i++) {
+
+        let monthlyMortgage = amortizationArray[i];
+
+        let amortRow = amortRowTemplate.content.cloneNode(true);
+
+        // Could use 'querySelectorAll' to get all the 'td' as an array and index them accordingly put content in
+        let month = amortRow.querySelector('.month');
+        month.textContent = monthlyMortgage.month;
+
+        let monthlyPayment = amortRow.querySelector('.monthlyPayment');
+        monthlyPayment.textContent = dollarUSLocal.format(monthlyMortgage.monthlyPayment);
+
+        let monthlyPrincipal = amortRow.querySelector('.monthlyPrincipal');
+        monthlyPrincipal.textContent = dollarUSLocal.format(monthlyMortgage.monthlyPrincipal);
+
+        let monthlyInterest = amortRow.querySelector('.monthlyInterest');
+        monthlyInterest.textContent = dollarUSLocal.format(monthlyMortgage.monthlyInterest);
+
+        let totMonthlyInterest = amortRow.querySelector('.totMonthlyInterest');
+        totMonthlyInterest.textContent = dollarUSLocal.format(monthlyMortgage.totMonthlyInterest);
+
+        let monthlyBalance = amortRow.querySelector('.monthlyBalance');
+        // Can use Math.abs in above monthlyBalance instead of if statement to make sure it only returns positive values
+        if (monthlyMortgage.monthlyBalance &lt; 0 ) {
+
+            monthlyBalance.textContent = dollarUSLocal.format(0);
+        }
+
+        amortTable.appendChild(amortRow);
+    }
+}
+
+// Get calculations that are stored in local storage
+function getCalculation() {
+    // Get calculations from local storage
+    let mortgageCalcsJson = localStorage.getItem('rpc-mortgageCalcs');
+
+    // Initialize calcs if it hasn't been created before
+    let storedMortgageCalcs = [];
+
+    if (mortgageCalcsJson != null) {
+        storedMortgageCalcs = JSON.parse(mortgageCalcsJson);
+    }
+
+    return storedMortgageCalcs;
+}
+
+// Display past calculations
+function displayHistory(mortgageCalcsArray) {
+
+    const historyCardTemplate = document.getElementById('historyCardTemplate');
+
+    const historyCardDiv = document.getElementById('historyCardDiv');
+
+    historyCardDiv.textContent = '';
+
+    let dollarUSLocal = Intl.NumberFormat('en-US', {
+        style: "currency",
+        currency: "USD"
+    });
+
+    for (let i = mortgageCalcsArray.length - 1; i >= 0 ; i--) {
+
+        let mortgageCalc = mortgageCalcsArray[i];
+
+        // Grab values to add to card
+        let monthlyPaymentHistValue = mortgageCalc.summary.monthlyPayment;
+        monthlyPaymentHistValue = dollarUSLocal.format(monthlyPaymentHistValue);
+        let loanHistValue = mortgageCalc.mortgageVariables.loan;
+        loanHistValue = loanHistValue/1000;
+        let termHistValue = mortgageCalc.mortgageVariables.term;
+        termHistValue = termHistValue;
+        let rateHistValue = mortgageCalc.mortgageVariables.rate;
+        rateHistValue = rateHistValue;
+
+        let historyCard = historyCardTemplate.content.cloneNode(true);
+
+        let collapseCard = historyCard.querySelector('.collapse');
+        collapseCard.setAttribute('id', `collapse-${i}`);
+        
+        let collapseBtn = historyCard.querySelector('.collapse .btn-close');
+        collapseBtn.setAttribute('data-bs-target', `#collapse-${i}`);
+        collapseBtn.setAttribute('aria-controls',`collapse-${i}`);
+        collapseBtn.setAttribute('data-mortgageCalcsArray-id',`${i}`);
+
+        let monthlyPaymentHist = historyCard.querySelector('.monthlyPaymentHist');
+        monthlyPaymentHist.textContent = monthlyPaymentHistValue;
+
+        let loanHist = historyCard.querySelector('.loanHist');
+        loanHist.textContent = loanHistValue;
+        
+        let termHist = historyCard.querySelector('.termHist');
+        termHist.textContent = termHistValue; 
+
+        let rateHist = historyCard.querySelector('.rateHist');
+        rateHist.textContent = rateHistValue; 
+
+        historyCardDiv.appendChild(historyCard);
+    }
+
+}
+
+// Save calculation in local storage
+function saveCalculation(mortgageCalcsArray) {
+
+    // Turn mortgage object into string
+    let mortgageCalcsJson = JSON.stringify(mortgageCalcsArray);
+
+    localStorage.setItem('rpc-mortgageCalcs', mortgageCalcsJson);
+}
+
+// Delete the saved calculation if the close button is pressed on the history cards
+function deleteCalculation(closeBtn) {
+
+    // Get number that identifies history card
+    let arrayNum = parseInt(closeBtn.getAttribute('data-mortgageCalcsArray-id'));
+
+    // Get calculations from local storage
+    let mortgageCalcsArray = getCalculation();
+    
+    // Decalare new array variable to move over the objects that are not deleted
+    let newMortgageCalcsArray = [];
+
+    for (let i = 0; i &lt; mortgageCalcsArray.length; i++) {
+
+        if (i != arrayNum) {
+        // Move over saved calculation
+        newMortgageCalcsArray.push(mortgageCalcsArray[i]);
+        }
+    }
+
+    // Save new updated array to local storage
+    saveCalculation(newMortgageCalcsArray);
+
 }
                     </code>
                 </pre>
             </div>
             <div class="col-12 col-lg-4">
-                <!-- Explain your code here! This is the trick, this is what I learned,
-                this is how it functions -->
-                <p>The code is structured in one function</p>
+                <h4>TL;DR</h4>
                 <p>
-                    <code>displayMessage</code> displays a sweetalert
-                    when the button is pressed.
+                    Start small whether in learning or building. The pieces (knowledge / functions)
+                    will start stacking. This is a culmination of knowledge gained from all previous challenges.
                 </p>
+                <h4>Code Explanation</h4>
+                <p>Green Grove Mortgage was created with the following functions:</p>
+                <p>
+                    <code>runMortgageCalculator</code> is the entry point of this application. An
+                    <span>EventListener</span>
+                    is used to watch for the submit event and call this function. The submit event happens when the
+                    "Calculate" button
+                    is clicked. The button is of <code>type="submit"</code> so that all the values from the form can
+                    be grabbed as an <span>object</span> instead of individually grabbing the value of each element in
+                    the
+                    form.
+                </p>
+                <p>
+                    <code>getMortgageVariables</code> grabs the values entered by the user as an <span>object</span>
+                    with <code>Object.fromEntries</code>.
+                    Since everything that comes to <span>JavaScript</span> from the <span>HTML</span> is a string, the
+                    properties in the <span>object</span>
+                    need to be changed to integers or floats using <code>parseInt</code> or <code>parseFloat</code>
+                    accordingly. If the inputs are not valid
+                    a <span>sweet alert</span> is used to notify the user.
+
+                </p>
+                <p>
+                    <code>calculateMortgage</code> has <code>mortgageVariables</code> as a parameter which is an object
+                    with properties that have values that were entered by the user. The values
+                    are then used to calculate all the properties in the <code>monthlyMortgageCalculation</code> and
+                    <code>summary</code> objects. In order
+                    to calculate the mortgage properties for each month of term, the <code>amortizationArray</code>
+                    variable is created to hold
+                    an array of <span><code>monthlyMortgageCalculation</code> objects</span>. The
+                    <code>mortgageVariables</code>,
+                    <code>summary</code>, and <code>amortizationArray</code> are then assigned to properties in the
+                    <code>mortgageCalcObject</code> so all
+                    the information related to the calculation can stay together and be easily accessed.
+                </p>
+                <p>
+                    <code>displayMortgageSummary</code> takes the properties of the <span><code>summary</code>
+                        object</span> and displays them in the "Your Monthly Payments"
+                    section of the app. Before the properties get displayed, they are formated to US dollars using
+                    <code>Intl.NumberFormat</code>.
+                </p>
+                <p>
+                    <code>displayAmortTable</code> takes the <code>amortizationArray</code> which holds the monthly
+                    mortgage calculations and displays them on the
+                    page as a table. Before the properties are displayed on the page, they are formated to US dollars
+                    using <code>Intl.NumberFormat</code>. A
+                    <span>template tag</span> in the <span>HTML</span> is used for a row of the table to easily recreate
+                    a row based on the properties of each
+                    <code>monthlyMortgageCalculation</code> object in the <code>amortizationArray</code>.
+                </p>
+                <p>
+                    <code>getCalculation</code> accesses the <code>localStorage</code> and gets previous mortgage
+                    calculations if there are any.
+                </p>
+                <p>
+                    <code>displayHistory</code> A <span>template tag</span> in the <span>HTML</span> is used for the
+                    history card to easily recreate a card
+                    which shows the monthly payment of previous mortgage calculations along with the values entered by
+                    the user.
+                    Before the properties are displayed on the card, they are formated to US dollars using
+                    <code>Intl.NumberFormat</code>. Each card is assigned
+                    custom attributes that work with <span>Bootstrap's</span> collapse feature so that the card can be
+                    closed accordingly when the "X" button
+                    is clicked.
+                </p>
+                <p>
+                    <code>saveCalculation</code> converts the object <code>mortgageCalcsArray</code> parameter
+                    into<span>JSON</span> and
+                    assigns it to a variable in the <code>localStorage</code>.
+                </p>
+                <p>
+                    <code>deleteCalculation</code> has a button element as a parameter. This is the close button on
+                    the history card that the user clicked to close. It then uses <code>getCalculation</code> to
+                    grab the current information in the <code>localStorage</code> and copies all the saved
+                    <code>mortgageCalcObject</code> objects to a new array except for the one tied to the
+                    history card that was closed. The new array is then saved to the <code>localStorage</code>.
+
+                </p>
+                <p>
+
+                </p>
+
+                <h4>What I learned</h4>
+                <ul>
+                    <li>Use <code>Object.fromEntries</code> to easily grab values from a form as an object</li>
+                    <li>Use <code>localStorage.clear</code> to clear the local storage or just assign the variables
+                        saved to empty values</li>
+                </ul>
+
+                <h4>Improvements</h4>
+                <ul>
+                    <li>When user clicks on history card, it populates the page fields based on the values from that
+                        card</li>
+                    <li>Button to see all past history cards</li>
+                    <li>Labeling so user knows what the icons are</li>
+                </ul>
             </div>
         </div>
     </main>
@@ -116,7 +529,8 @@ function displayMessage() {
                     &copy; 2023 Rebecca Copeland
                 </div>
                 <div class="col text-center">
-                    <img src="/img/Rebecca-Copeland-full-logo-white.svg" height="40" />
+                    <a class="nav-link" href="https://rebcop.dev/" target="_blank"><img
+                            src="/img/Rebecca-Copeland-full-logo-white.svg" height="40" /></a>
                 </div>
                 <div class="col text-center text-lg-end">
                     <a href="https://www.linkedin.com/in/rebcop/" target="_blank"><i class="bi bi-linkedin"></i></a>
